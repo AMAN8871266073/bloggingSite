@@ -38,7 +38,7 @@ const createBlog = async function (req, res) {
 //********************************* Blog List*********************************
 const blogList = async function (req, res) {
     try {
-        let filter = { isDeleted: false, isPublished: true }
+        let filter = { isDeleted: false, isPublished: false }
         let query = req.query
         const { authorId, tag, category, subcategory } = query
         if (authorId) {
@@ -53,11 +53,12 @@ const blogList = async function (req, res) {
         if (subcategory) {
             filter['subcategory'] = subcategory
         }
+        console.log(filter)
         let list = await blogModel.find(filter)
-        if (!(list.length > 0)) {
-            return res.status(404).send({ status: false, 'message': 'document not found' })
+        if (list.length > 0) {
+            return res.status(200).send({ status: true, 'list': list })
         }
-        return res.status(200).send({ status: true, 'list': list })
+        return res.status(404).send({ status: false, 'message': 'document not found' })
     } catch (err) {
         return res.status(500).send({ status: false, 'error': err })
     }
